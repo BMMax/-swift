@@ -136,6 +136,60 @@ class MyClass: MyProtocol {
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////04- selector/////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// 从2.2开始,使用#selector来暴露给objective-c的代码中来获取一个seletor
+
+ private func callMe() {
+    //------
+}
+ private func callMeWithParam(obj:AnyObject)  {
+    //.......
+}
+
+//注意: seletor其实是oc runtime的概念,如果你的seletor对应的方法只有在swift中可见的
+//(也就是说它是一个swift中的private方法)在调用这个selector时你会遇到unrecognize selector的
+
+let someMethod = #selector(callMe)
+let anotherMethod = #selector(callMeWithParam(_:))
+
+func turnByAngle(theAngle:Int,speed: Float) {
+    //......
+}
+
+let method = #selector(turnByAngle(_:speed:))
+
+
+NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(callMe), userInfo: nil, repeats: true)
+
+//
+
+
+
+// 如果方法名字在方法所在域中是唯一的话,我们可以简单只是用方法的名字来作为#seletor的内容
+
+// “let someMethod = #selector(callMe)
+//  let anotherMethod = #selector(callMeWithParam)
+//  let method = #selector(turnByAngle)”
+
+// 对应名字相同,函数签名不同的可以使用强转
+
+func commonFunc() {
+    
+}
+
+func commonFunc(input: Int) -> Int {
+    
+}
+
+
+let method1 = #selector(commonFunc as ()->())
+let method2 = #selector(commonFunc as Int ->Int)
+
+
+
+
 
 
 
