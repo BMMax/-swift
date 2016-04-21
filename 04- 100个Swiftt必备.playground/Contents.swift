@@ -237,8 +237,56 @@ let f3: oursClass->Int->Int = oursClass.method
 let re33 = f3(oursClass())(1)
 
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////04-单例/////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
+// oc 写法
 
+class MyManager {
+    class var sharedManager: MyManager{
+        
+        
+        // swift1.2之前并不支持存储类型的类属性,需要用一个struct来存储类型变量
+        struct Static {
+            static var oneToken: dispatch_once_t = 0
+            static var staticInstance: MyManager? = nil
+        }
+        
+        dispatch_once(&Static.oneToken){
+        
+            Static.staticInstance = MyManager()
+        }
+    
+        return Static.staticInstance!
+    }
+}
+
+// 使用let简化
+
+class MyManager1 {
+    class var shareManager: MyManager1 {
+        struct Static {
+            static let shareInstance: MyManager1 = MyManager1()
+        }
+    return Static.shareInstance
+    }
+}
+
+// swift1.2之前
+//在swift1.2之前class不支持存储式的property,
+//private let shareInstance = MyManager2()
+//class MyManager2 {
+//    class var sharedManager:MyManager2 {
+//        return shareInstance
+//    }
+//}
+
+// swift1.2之后
+class MyManager3 {
+    static let sharedInstance = MyManager3()
+    private init(){}
+}
 
 
 
