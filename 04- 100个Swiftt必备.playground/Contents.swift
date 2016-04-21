@@ -150,18 +150,18 @@ class MyClass: MyProtocol {
 
 //注意: seletor其实是oc runtime的概念,如果你的seletor对应的方法只有在swift中可见的
 //(也就是说它是一个swift中的private方法)在调用这个selector时你会遇到unrecognize selector的
-
-let someMethod = #selector(callMe)
-let anotherMethod = #selector(callMeWithParam(_:))
+//
+//let someMethod = #selector(callMe)
+//let anotherMethod = #selector(callMeWithParam(_:))
 
 func turnByAngle(theAngle:Int,speed: Float) {
     //......
 }
 
-let method = #selector(turnByAngle(_:speed:))
+//let method = #selector(turnByAngle(_:speed:))
 
 
-NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(callMe), userInfo: nil, repeats: true)
+//NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(callMe), userInfo: nil, repeats: true)
 
 //
 
@@ -180,13 +180,61 @@ func commonFunc() {
 }
 
 func commonFunc(input: Int) -> Int {
+    /// 
+    return 1
+}
+
+//
+//let method1 = #selector(commonFunc as ()->())
+//let method2 = #selector(commonFunc as Int ->Int)
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////04-实例方法的动态调用/////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+class ourClass {
+    
+    func method(number: Int) -> Int {
+        return number + 1
+    }
+    
+}
+
+// oc中如果调用method方法,需要生成ourClass的实例,然后用.method来调用它
+
+let object = ourClass()
+let resultO = object.method(1)
+
+let f = ourClass.method  //(Int)->Int
+let obj = ourClass()
+let res = f(object)(1)
+//只能用于实例方法
+let re = ourClass.method(ourClass())(1)
+
+// 当我们遇到类型方法的名字有冲突的时候
+
+class oursClass {
+    func method(number: Int) -> Int {
+        return number + 1
+    }
+    
+    class func method(number: Int)  ->Int{
+        return number
+    }
     
 }
 
 
-let method1 = #selector(commonFunc as ()->())
-let method2 = #selector(commonFunc as Int ->Int)
+//如果不加改动,oursClass.method讲获取的是类型方法,如果要获取实例的方法,可以显示地加上类型声明
 
+let f1 = oursClass.method
+// class func method的版本
+let f2: Int->Int = oursClass.method
+// 跟f1一样
+
+let f3: oursClass->Int->Int = oursClass.method
+let re33 = f3(oursClass())(1)
 
 
 
