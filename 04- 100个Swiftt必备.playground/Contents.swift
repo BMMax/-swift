@@ -184,6 +184,27 @@ func commonFunc(input: Int) -> Int {
     return 1
 }
 
+/*
+private struct Action{
+
+    static let buttonTapped = #selector(Viewcontroller.buttonTaped(_:))
+
+}
+
+button.addTarget(self,action:Action.buttonTapped,forControlEvents: .TouchUpInside)
+*/
+/*
+ 
+ private extension Selector {
+ static let buttonTapped =
+ #selector(ViewController.buttonTapped(_:))
+ }
+ ...
+ button.addTarget(self, action: .buttonTapped,
+ forControlEvents: .TouchUpInside)
+ 
+ */
+
 //
 //let method1 = #selector(commonFunc as ()->())
 //let method2 = #selector(commonFunc as Int ->Int)
@@ -287,6 +308,26 @@ class MyManager3 {
     static let sharedInstance = MyManager3()
     private init(){}
 }
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////05-sting 和 NSString/////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+let levels = "ABCDE"
+for i in levels.characters{
+
+    print(i)
+}
+
+// containString
+
+if (levels as NSString).containsString("BC"){
+    print("包含")
+
+}
+
+// 跟NSRange配合用NSSting
+let nsRange = NSMakeRange(1, 4)
+(levels as NSString).stringByReplacingCharactersInRange(nsRange, withString: "AAAA")
 
 
 
