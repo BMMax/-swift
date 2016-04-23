@@ -20,7 +20,7 @@ func addTo(adder: Int) ->Int ->Int{
 }
 
 let addTwo = addTo(2)
-let result = addTwo(6)
+//let result = addTwo(6)
 let result1 = addTo(4)(3)
 
 
@@ -328,6 +328,96 @@ if (levels as NSString).containsString("BC"){
 // 跟NSRange配合用NSSting
 let nsRange = NSMakeRange(1, 4)
 (levels as NSString).stringByReplacingCharactersInRange(nsRange, withString: "AAAA")
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////05-GCD和延时调用/////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+// 创建目标队列
+let workingQueue = dispatch_queue_create("myQueue", nil)
+
+// 派发到目标队列,GCD会负责进行线程的调度
+dispatch_async(workingQueue) { 
+    // 在workingQueue中异步进行
+    print("努力工作")
+    
+    NSThread.sleepForTimeInterval(2)// 模拟两秒的执行时间
+    
+    dispatch_async(dispatch_get_main_queue()) {
+        // 返回到主线程更新UI
+        print("结束工程,更新UI")// 更新UI的话,必须回到主线程进行()
+    }
+}
+
+// 在xx秒后执行某个方法,比如切换界面2秒后开始播放一段动画,或者提示框3秒后自动消失等等
+// 在oc中用 performSelector:withObjective:afterDelay:来指定在某个时间后执行某个seletor
+// 在swift中由于该方法存在线程安全问题,已经废弃
+// swift中用dispatch_after
+let time: NSTimeInterval = 2.0
+let delay = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
+dispatch_after(delay, dispatch_get_main_queue()) { 
+    print("2秒后执行")
+}
+
+// iOS8中可以将一个dispatch_block_t 对象传递给dispatch_block_cancel来取消一个正在等待的block.取消任务不在是NSOperation的专利
+
+typealias Task = (cancel:Bool)->Void
+func delay(time:NSTimeInterval,task:()->()) -> Task? {
+    func dispatch_later(block:()->()){
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(time * Double(NSEC_PER_SEC))),
+            dispatch_get_main_queue(),
+            block)
+    }
+    
+    
+    var closure:dispatch_block_t? = task
+    var result: Task?
+    
+    let delayedClosure: Task = {
+    
+        cancel in if let internalClosure = closure{
+        
+            if cancel == false {
+                dispatch_async(dispatch_get_main_queue(), internalClosure)
+            }
+        
+        }
+        
+        closure = nil
+        result = nil
+    
+    }
+    result = delayedClosure
+    dispatch_later { 
+        
+        if let delayedClosure = result{
+        
+            delayedClosure(cancel: false)
+        
+        }
+    }
+    
+    return result
+    
+}
+func cancel(task:Task?){
+    
+    task?(cancel:true)
+    
+}
+
+let task = delay(5){print("拨打110")}
+
+//取消
+cancel(task)
+
+
+
+
 
 
 
